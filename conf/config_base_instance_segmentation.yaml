@@ -1,0 +1,99 @@
+general:
+  train_mode: true #true
+  task: "instance_segmentation"
+  seed: null
+  checkpoint: null
+  backbone_checkpoint: null
+  freeze_backbone: false # train only last layer 
+  linear_probing_backbone: false
+  train_on_segments: true
+  eval_on_segments: true
+  filter_out_instances: false
+  save_visualizations: false
+  visualization_point_size: 20
+  decoder_id: -1
+  export: false
+  use_dbscan: false
+  ignore_class_threshold: 100
+  project_name: debugging
+  workspace: jonasschult
+  experiment_name: learn_energy #scannet200_val_test
+  num_targets: 202
+  add_instance: true
+  dbscan_eps: 0.95
+  dbscan_min_points: 1
+
+
+  export_threshold: 0.0001
+
+  reps_per_epoch: 1
+
+  on_crops: false
+
+  scores_threshold: 0.0
+  iou_threshold: 1.0
+
+  area: 5
+
+  eval_inner_core: -1 # disabled
+
+  topk_per_image: 100
+
+  ignore_mask_idx: []
+
+  max_batch_size: 99999999
+
+  save_dir: saved/${general.experiment_name}
+  # time/commit/md5(config)_uuid
+  # time/experiment_id/version_uuid
+  # experiment_id: 1 # commit[:8], or unique from logger
+  # version: 1 # md5[:8] of config
+
+  gpus: 1
+
+  save_recall: False
+  save_recall_in: './json/recall.yml'
+  save_recall_at: [0.25] #iou
+
+  evaluate_with_oracle: False
+  evaluate_baseline: False
+
+  OW_task: "task1" # task1: common+tail, task2: tail
+
+
+  save_precision_in: "./json/precision/"
+  save_precision_at: [0.8] #recall
+
+  save_WI_AOSE: False
+
+  save_KN_UKN_tSNE: False # save yml file of known uknown clusters and distance between centers
+  save_features_in: "./json/features/"
+
+  learn_energy_trainig_dataset: True
+  save_energy_training_dataset_in: "./json/energy/"
+  WARM_UP_EPOCH: 300
+  ENERGY_TEMP: 0.05   
+
+
+defaults:
+  - data: indoor
+  - data/data_loaders: simple_loader
+  - data/datasets: scannet200
+  - data/collation_functions: voxelize_collate
+  - logging: full
+  - model: mask3d
+  - metrics: miou
+  - optimizer: adamw
+  - scheduler: onecyclelr
+  - trainer: trainer600 
+  - callbacks: callbacks_instance_segmentation
+  - matcher: hungarian_matcher
+  - loss: set_criterion
+
+hydra:
+  run:
+    dir: saved/hydra_logs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: saved/hydra_logs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    # dir: ${general.save_dir}
+    subdir: ${hydra.job.num}_${hydra.job.id}
