@@ -1,0 +1,10 @@
+ssh fahadkhan@10.127.30.95
+Fahad@123
+ssh alvis
+cd /cephyr/NOBACKUP/groups/alvis_cvl/amine/Mask3D
+conda activate mask3da
+module load CUDA/11.6.0
+cd MinkowskiEngine
+python setup.py install --blas_include_dirs=${CONDA_PREFIX}/include --blas=openblas
+ nano saved/learn_energy/wandb/latest-run/files/output.log
+ nano data/processed/scannet200/label_database.yaml 

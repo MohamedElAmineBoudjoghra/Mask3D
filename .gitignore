@@ -3,3 +3,8 @@
 /recall_classes.json
 /saved
 /train.sbatch
+/data
+/*.png
+/json
+/*.ckpt
+/code.py

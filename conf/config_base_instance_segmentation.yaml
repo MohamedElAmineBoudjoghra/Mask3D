@@ -72,7 +72,14 @@ general:
   learn_energy_trainig_dataset: True
   save_energy_training_dataset_in: "./json/energy/"
   WARM_UP_EPOCH: 300
-  ENERGY_TEMP: 0.05   
+  ENERGY_TEMP: 0.05
+
+  enable_baseline_clustering: True
+  c_loss: 1
+  store_path: "./json/store/store.pt"
+  clustering_start_iter: 30
+  clustering_update_mu_iter: 2
+  clustering_momentum: 0.7
 
 
 defaults:

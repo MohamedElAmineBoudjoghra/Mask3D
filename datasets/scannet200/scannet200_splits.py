@@ -16,3 +16,4 @@ CLASS_LABELS_200_VALIDATION = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16
 VALID_CLASS_IDS_200_TRAIN_ONLY = ('bicycle', 'storage container', 'candle', 'guitar case', 'purse', 'alarm clock', 'music stand', 'cd case', 'structure', 'storage organizer', 'luggage')
 
 CLASS_LABELS_200_TRAIN_ONLY = (121,  221,  286,  331,  399,  572,  581, 1174, 1178, 1183, 1190)
+ 

@@ -105,7 +105,8 @@ class InstanceSegmentation(pl.LightningModule):
         matcher = hydra.utils.instantiate(config.matcher)
         weight_dict = {"loss_ce": matcher.cost_class,
                        "loss_mask": matcher.cost_mask,
-                       "loss_dice": matcher.cost_dice}
+                       "loss_dice": matcher.cost_dice,
+                       "c_loss": self.config.general.c_loss}
 
         aux_weight_dict = {}
         for i in range(self.model.num_levels * self.model.num_decoders):
@@ -143,7 +144,7 @@ class InstanceSegmentation(pl.LightningModule):
         elif self.config.general.OW_task == "task3":
             target = self.task_3(target)
         else:
-            print("ENTER ONE OF CANDIDATE TASKS")
+            assert False , "ENTER ONE OF CANDIDATE TASKS : task1, task2, task3"
                
         if data.features.shape[0] > self.config.general.max_batch_size:
             print("data exceeds threshold")
@@ -174,7 +175,7 @@ class InstanceSegmentation(pl.LightningModule):
                 raise run_err
 
         try:
-            losses = self.criterion(output, target, mask_type=self.mask_type)
+            losses = self.criterion(output, target, mask_type=self.mask_type, iteration = self.global_step)
             
             if self.config.general.learn_energy_trainig_dataset and (self.epoch >= self.config.general.WARM_UP_EPOCH):
                 
@@ -497,8 +498,7 @@ class InstanceSegmentation(pl.LightningModule):
 
             try:
                 
-                losses = self.criterion(output, target,
-                                        mask_type=self.mask_type)
+                losses = self.criterion(output, target, mask_type=self.mask_type, iteration = 0)
                 
 
                 if not self.config.general.train_mode:
