@@ -127,6 +127,7 @@ class InstanceSegmentation(pl.LightningModule):
         self.iou = IoU()
         # misc
         self.labels_info = dict()
+        
         self.train_oracle = self.config.general.train_oracle
         
     def forward(self, x, point2segment=None, raw_coordinates=None, is_eval=False):
@@ -1179,6 +1180,7 @@ class InstanceSegmentation(pl.LightningModule):
                         print('exception occured')
             
                 target[batch_id]['segment_mask'][target[batch_id]['labels']==198] = False
+                
         elif self.train_oracle:
             for batch_id in range(len(target)):
                 for k in IGNORED_CLASSES_SCANNET_200_IDS:
