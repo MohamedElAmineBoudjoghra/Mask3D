@@ -487,7 +487,7 @@ class Queue:
     def __init__(self, store_cap, store_path):
         self.num_seen_cls = store_cap[0]
         self.size_per_cls = (store_cap[1], store_cap[2])
-        self.store = [torch.zeros(size = self.size_per_cls) for _ in range(self.num_seen_cls+1)]
+        self.store = [torch.zeros(size = self.size_per_cls) for _ in range(self.num_seen_cls)]
         self.store_path = store_path
         root = store_path.replace('store.pt', '')
         if not os.path.exists(root):
