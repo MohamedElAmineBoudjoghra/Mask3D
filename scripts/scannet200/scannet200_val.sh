@@ -7,7 +7,7 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="learn_energy" \
+general.experiment_name="Oracle" \
 general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
