@@ -133,22 +133,20 @@ class SetCriterion(nn.Module):
         self.enable_baseline_clustering = enable_baseline_clustering
         self.hingeloss = nn.HingeEmbeddingLoss(2)
         self.clustering_momentum = clustering_momentum
-        # self.apply_CC = apply_CC
-        # if self.apply_CC:
+        # self.enable_meta_loss = enable_meta_loss
+        # if self.enable_meta_loss:
         #     print('Loading Discriminative Centroids Loss.')
-        #     self.CC_loss = DiscCentroidsLoss(num_classes=self.num_classes, feat_dim=128)
-        # elif self.apply_CC_baseline:
+        #     self.meta_loss = DiscCentroidsLoss(num_classes=self.num_classes, feat_dim=128)
+        # elif self.enable_baseline_clustering:
         #     print('applying baseline contrastive loss')
     
 
             
-    # def cent_loss(self, feats, label):
-    #     if self.apply_CC:
-    #         return {"cent_loss": self.CC_loss(feats, label)}
-    #     elif self.apply_CC_baseline:
-    #         return {"cent_loss": self.CC_loss_baseline(feats, label)}
+    # def get_meta_loss(self, feats, label):
+    #     if self.enable_meta_loss:
+    #         return {"meta_loss": self.meta_loss(feats, label)}
     #     else:
-    #         return {"cent_loss": 0}
+    #         return {"meta_loss": 0}
     
     
     
@@ -165,7 +163,6 @@ class SetCriterion(nn.Module):
         elif iter == self.clustering_start_iter:
             self.means =  self.store.get_means()
             c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
-            iter = 3*self.clustering_start_iter
         elif (iter > self.clustering_start_iter) and (iter % self.clustering_update_mu_iter == 0):
             self.means = self.clustering_momentum*self.means+(1-self.clustering_momentum)*self.store.get_means()
             c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
