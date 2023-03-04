@@ -19,8 +19,7 @@ import volumentations as V
 import yaml
 # from yaml import CLoader as Loader
 from torch.utils.data import Dataset
-from datasets.scannet200.scannet200_constants import SCANNET_COLOR_MAP_200, SCANNET_COLOR_MAP_20
-
+from datasets.scannet200.scannet200_constants import SCANNET_COLOR_MAP_200, SCANNET_COLOR_MAP_200, CLASS_LABELS_200
 logger = logging.getLogger(__name__)
 
 
@@ -597,16 +596,16 @@ class SemanticSegmentationDataset(Dataset):
     def _remap_from_zero(self, labels):
         labels[~np.isin(labels, list(self.label_info.keys()))] = self.ignore_label
         # remap to the range from 0
-        for i, k in enumerate(self.label_info.keys()):
-            labels[labels == k] = i
+        for k in self.label_info.keys():
+            labels[labels == k] = list(CLASS_LABELS_200).index(self.label_info[k]['name'])
         return labels
 
     def _remap_model_output(self, output):
         output = np.array(output)
         output[output==202] = 200 #setting the unknown class to common 200 label
         output_remapped = output.copy()
-        for i, k in enumerate(self.label_info.keys()):
-            output_remapped[output == i] = k
+        for k in self.label_info.keys():
+            output_remapped[output == list(CLASS_LABELS_200).index(self.label_info[k]['name'])] = k
         return output_remapped
 
     def augment_individual_instance(
