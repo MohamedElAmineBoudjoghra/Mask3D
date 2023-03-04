@@ -96,9 +96,9 @@ class InstanceSegmentation(pl.LightningModule):
         self.ukn_cls = 200
         
         if self.config.general.OW_task == "task1":
-            self.num_seen_classes = len(HEAD_CATS_SCANNET_200)-2
+            self.num_seen_classes = len(HEAD_CATS_SCANNET_200)
         elif self.config.general.OW_task == "task2":
-            self.num_seen_classes = len(HEAD_CATS_SCANNET_200+COMMON_CATS_SCANNET_200)-2
+            self.num_seen_classes = len(HEAD_CATS_SCANNET_200+COMMON_CATS_SCANNET_200)
         else:
             self.num_seen_classes = 198
         
@@ -437,10 +437,6 @@ class InstanceSegmentation(pl.LightningModule):
         original_normals = data.original_normals
         original_coordinates = data.original_coordinates
         
-        if self.config.general.OW_task == "task1":
-            target = self.task_1(target, eval = True)
-        elif self.config.general.OW_task == "task2":
-            target = self.task_2(target, eval = True)
         # "task3" no unknowns
         
         
@@ -501,21 +497,21 @@ class InstanceSegmentation(pl.LightningModule):
                 
                 losses = self.criterion(output, target, mask_type=self.mask_type, iteration = 0)
                 
+                if self.config.general.OW_task == "task1":
+                    target = self.task_1(target, eval = True)
+                elif self.config.general.OW_task == "task2":
+                    target = self.task_2(target, eval = True)
 
-                if not self.config.general.train_mode:
-                    if self.config.general.evaluate_baseline:
-                        print("Evaluating baseline")
-                        self.update_A_OSE(0,output, target, self.topk)
+                
+                if self.config.general.evaluate_baseline or self.config.general.train_oracle:
+                    self.update_A_OSE(0,output, target, self.topk)
+                    
+                elif not self.config.general.evaluate_with_oracle or not self.config.general.train_oracle:
+                    for b in range(len(target)):
+                        output = self.Auto_Labeling(b, output, target, self.topk)
                         
-                    elif not self.config.general.evaluate_with_oracle:
-                        print("Evaluating with autolabeler")
-                        for b in range(len(target)):
-                            output = self.Auto_Labeling(b, output, target, self.topk)
-                            
-                        self.update_A_OSE(0,output, target, self.topk)
-                            
-                    else:
-                        print("Evaluating with oracle")
+                    self.update_A_OSE(0,output, target, self.topk)
+                        
 
                 if self.config.general.save_KN_UKN_tSNE:
                     pred_logits = output['pred_logits']
@@ -1178,17 +1174,19 @@ class InstanceSegmentation(pl.LightningModule):
                         target[batch_id]['labels'][target[batch_id]['labels']==k]=198
                     except:
                         print('exception occured')
-            
-                target[batch_id]['segment_mask'][target[batch_id]['labels']==198] = False
+                        
+                if not self.train_oracle:
+                    #condition for the autolabeler to work
+                    target[batch_id]['segment_mask'][target[batch_id]['labels']==198] = False
                 
-        elif self.train_oracle:
+        elif not eval and self.train_oracle:
             for batch_id in range(len(target)):
                 for k in IGNORED_CLASSES_SCANNET_200_IDS:
                     try:
                         target[batch_id]['labels'][target[batch_id]['labels']==k]=200
                     except:
                         print('exception occured')
-        else:        
+        elif not eval and not self.train_oracle:        
             for batch_id in range(len(target)):
                 for k in IGNORED_CLASSES_SCANNET_200_IDS:
                     try:
