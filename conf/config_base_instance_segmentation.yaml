@@ -57,6 +57,7 @@ general:
 
   evaluate_with_oracle: False
   evaluate_baseline: False
+  train_oracle: True
 
   OW_task: "task1" # task1: common+tail, task2: tail
 
@@ -69,7 +70,7 @@ general:
   save_KN_UKN_tSNE: False # save yml file of known uknown clusters and distance between centers
   save_features_in: "./json/features/"
 
-  learn_energy_trainig_dataset: True
+  learn_energy_trainig_dataset: False
   save_energy_training_dataset_in: "./json/energy/"
   WARM_UP_EPOCH: 300
   ENERGY_TEMP: 0.05

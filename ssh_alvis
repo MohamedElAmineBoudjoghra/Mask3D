@@ -8,3 +8,4 @@ cd MinkowskiEngine
 python setup.py install --blas_include_dirs=${CONDA_PREFIX}/include --blas=openblas
  nano saved/learn_energy/wandb/latest-run/files/output.log
  nano data/processed/scannet200/label_database.yaml 
+ ln -s /cephyr/NOBACKUP/groups/alvis_cvl/salwa/Mask3D-modified/Mask3D/data ./data
