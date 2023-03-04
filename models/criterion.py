@@ -487,7 +487,7 @@ class Queue:
     def __init__(self, store_cap, store_path):
         self.num_seen_cls = store_cap[0]
         self.size_per_cls = (store_cap[1], store_cap[2])
-        self.store = [torch.zeros(size = self.size_per_cls) for _ in range(self.num_seen_cls)]
+        self.store = [torch.zeros(size = self.size_per_cls) for _ in range(self.num_seen_cls+1)]
         self.store_path = store_path
         root = store_path.replace('store.pt', '')
         if not os.path.exists(root):
@@ -496,6 +496,7 @@ class Queue:
 
             
     def update_store(self, outputs, targets , indices):
+        oracle = False
         self.store = torch.load(self.store_path)
         self.store = [t.to(outputs['pred_logits'].device) for t in self.store]
         pred_logits = outputs['pred_logits']
@@ -512,10 +513,17 @@ class Queue:
             if 198 in label_list:
                 label_list.remove(198)
             if 253 in label_list:
-                label_list.remove(253)    
+                label_list.remove(253)
+            
+                    
             for tg in label_list:
                 num_feats = (targets[batch_id]['labels'] == tg).sum()
-                self.store[tg] = torch.cat([self.store[tg][num_feats:],ref_qerries[tg_labels==tg]], dim = 0)
+                if tg != 200:
+                    self.store[tg] = torch.cat([self.store[tg][num_feats:],ref_qerries[tg_labels==tg]], dim = 0)
+                else:
+                    #oracle
+                    self.store[-1] = torch.cat([self.store[-1][num_feats:],ref_qerries[tg_labels==tg]], dim = 0)
+   
             #unknown
             num_feats = (unkn_lbs[batch_id]).sum()
             if num_feats != 0:
