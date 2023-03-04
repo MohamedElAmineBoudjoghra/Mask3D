@@ -276,11 +276,13 @@ class InstanceSegmentation(pl.LightningModule):
             temp_file_path = file_path_p+"/logits_temp/"
             new_file_path = file_path_p+"/logits/"
             for file in os.listdir("./saved/"+self.config.general.experiment_name):
-                file = file.split("=")
+                file_lst = file.split("_")
                 
-                if "epoch" in file:
+                if "ap" in file_lst:
                     os.replace(temp_file_path, new_file_path)
                     self.learn_energy()
+                    os.replace("./saved/"+self.config.general.experiment_name+"/"+file, "./saved/"+self.config.general.experiment_name+"/best.ckpt")
+                    
                     
             if os.path.exists(temp_file_path):    
                 shutil.rmtree(temp_file_path)
@@ -1264,13 +1266,12 @@ class InstanceSegmentation(pl.LightningModule):
             wb_dist_param.append({"scale_known": wb_kn.alpha, "shape_known": wb_kn.beta, "shift_known": wb_kn.gamma})
             
             torch.save(wb_dist_param, save_WB_in)
-            bins = np.linspace(2, 15, 500)
-            plt.hist(lse_kn, bins, density = True,alpha=0.5, label='known')
-            # plt.hist(lse_unkn, bins, density = True, alpha=0.5, label='unk')
+            plt.hist(lse_kn, density = True,alpha=0.5, label='known')
+            plt.hist(lse_unkn, density = True, alpha=0.5, label='unk')
             plt.legend(loc='upper right')
             save_WB_in = "./saved/"+self.config.general.experiment_name
             plt.savefig(os.path.join(save_WB_in, 'energy.png'))
-            
+            plt.clf()
             shutil.rmtree(file_path)
   
         else: 
