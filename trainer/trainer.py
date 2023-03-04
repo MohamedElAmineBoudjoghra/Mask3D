@@ -127,7 +127,8 @@ class InstanceSegmentation(pl.LightningModule):
         self.iou = IoU()
         # misc
         self.labels_info = dict()
-        self.epoch = 0
+        self.train_oracle = self.config.general.train_oracle
+        
     def forward(self, x, point2segment=None, raw_coordinates=None, is_eval=False):
         with self.optional_freeze():
             x = self.model(x, point2segment, raw_coordinates=raw_coordinates,
@@ -177,7 +178,7 @@ class InstanceSegmentation(pl.LightningModule):
         try:
             losses = self.criterion(output, target, mask_type=self.mask_type, iteration = self.global_step)
             
-            if self.config.general.learn_energy_trainig_dataset and (self.epoch >= self.config.general.WARM_UP_EPOCH):
+            if self.config.general.learn_energy_trainig_dataset and (self.current_epoch >= self.config.general.WARM_UP_EPOCH):
                 
                 for b in range(len(target)):
                     output = self.Auto_Labeling(b, output, target, self.topk)
@@ -268,7 +269,7 @@ class InstanceSegmentation(pl.LightningModule):
         results = {"train_loss_mean": train_loss}
         self.log_dict(results)
 
-        if self.config.general.learn_energy_trainig_dataset and (self.epoch >= self.config.general.WARM_UP_EPOCH):
+        if self.config.general.learn_energy_trainig_dataset and (self.current_epoch >= self.config.general.WARM_UP_EPOCH):
             
             file_path_p = self.config.general.save_energy_training_dataset_in+"train_set/"+self.config.general.OW_task
             temp_file_path = file_path_p+"/logits_temp/"
@@ -282,7 +283,6 @@ class InstanceSegmentation(pl.LightningModule):
                     
             if os.path.exists(temp_file_path):    
                 shutil.rmtree(temp_file_path)
-        self.epoch+=1
                 
 
     def validation_epoch_end(self, outputs):
@@ -1179,6 +1179,13 @@ class InstanceSegmentation(pl.LightningModule):
                         print('exception occured')
             
                 target[batch_id]['segment_mask'][target[batch_id]['labels']==198] = False
+        elif self.train_oracle:
+            for batch_id in range(len(target)):
+                for k in IGNORED_CLASSES_SCANNET_200_IDS:
+                    try:
+                        target[batch_id]['labels'][target[batch_id]['labels']==k]=200
+                    except:
+                        print('exception occured')
         else:        
             for batch_id in range(len(target)):
                 for k in IGNORED_CLASSES_SCANNET_200_IDS:
