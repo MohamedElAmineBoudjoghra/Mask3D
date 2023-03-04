@@ -55,9 +55,10 @@ general:
   save_recall_in: './json/recall.yml'
   save_recall_at: [0.25] #iou
 
+  train_oracle: True
   evaluate_with_oracle: False
   evaluate_baseline: False
-  train_oracle: True
+  
 
   OW_task: "task1" # task1: common+tail, task2: tail
 
@@ -75,11 +76,11 @@ general:
   WARM_UP_EPOCH: 300
   ENERGY_TEMP: 0.05
 
-  enable_baseline_clustering: True
+  enable_baseline_clustering: False
   c_loss: 1
   store_path: "./json/store/store.pt"
-  clustering_start_iter: 30
-  clustering_update_mu_iter: 2
+  clustering_start_iter: 20000
+  clustering_update_mu_iter: 20
   clustering_momentum: 0.7
 
 

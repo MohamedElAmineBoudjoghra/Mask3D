@@ -158,7 +158,7 @@ class SetCriterion(nn.Module):
     def get_clustering_loss(self, outputs, targets, indices, iter):
         device = targets[0]['labels'].device
         if not self.enable_baseline_clustering:
-            return torch.tensor([0]).to(device)
+            return {"c_loss": torch.tensor([0]).to(device)}
         c_loss = 0
         if (iter > self.clustering_start_iter//2) and (iter < self.clustering_start_iter):
             self.store.update_store(outputs, targets, indices)
