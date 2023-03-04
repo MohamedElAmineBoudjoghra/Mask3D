@@ -55,7 +55,7 @@ general:
   save_recall_in: './json/recall.yml'
   save_recall_at: [0.25] #iou
 
-  train_oracle: True
+  train_oracle: False
   evaluate_with_oracle: False
   evaluate_baseline: False
   
@@ -63,22 +63,22 @@ general:
   OW_task: "task1" # task1: common+tail, task2: tail
 
 
-  save_precision_in: "./json/precision/"
+  save_precision_in: "./json/${general.experiment_name}/precision/"
   save_precision_at: [0.8] #recall
 
   save_WI_AOSE: False
 
   save_KN_UKN_tSNE: False # save yml file of known uknown clusters and distance between centers
-  save_features_in: "./json/features/"
+  save_features_in: "./json/${general.experiment_name}/features/"
 
-  learn_energy_trainig_dataset: False
-  save_energy_training_dataset_in: "./json/energy/"
+  learn_energy_trainig_dataset: True
+  save_energy_training_dataset_in: ./json/${general.experiment_name}/energy/
   WARM_UP_EPOCH: 300
   ENERGY_TEMP: 0.05
 
-  enable_baseline_clustering: False
+  enable_baseline_clustering: True
   c_loss: 1
-  store_path: "./json/store/store.pt"
+  store_path: "./json/${general.experiment_name}/store/store.pt"
   clustering_start_iter: 20000
   clustering_update_mu_iter: 20
   clustering_momentum: 0.7
