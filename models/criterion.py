@@ -158,21 +158,20 @@ class SetCriterion(nn.Module):
         device = targets[0]['labels'].device
         if not self.enable_baseline_clustering:
             return {"c_loss": torch.tensor([0]).to(device)}
-        
+        c_loss = 0
         if (iter > self.clustering_start_iter//2) and (iter < self.clustering_start_iter):
-            c_loss = 0
             self.store.update_store(outputs, targets, indices)
         elif iter == self.clustering_start_iter:
-            c_loss = 0
             self.means =  self.store.get_means().to(device)
             c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
             self.store.update_store(outputs, targets, indices)
-        elif (iter > self.clustering_start_iter) and (iter % self.clustering_update_mu_iter == 0):
-            c_loss = 0
-            self.means = self.clustering_momentum*self.means.to(device)+(1-self.clustering_momentum)*self.store.get_means().to(device)
-            c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
+        elif iter > self.clustering_start_iter:
+            if iter % self.clustering_update_mu_iter == 0:
+                self.means = self.clustering_momentum*self.means.to(device)+(1-self.clustering_momentum)*self.store.get_means().to(device)
+            
+            c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)    
             self.store.update_store(outputs, targets, indices)
-        
+            
         return {"c_loss": torch.tensor([c_loss]).to(device) } 
             
     
