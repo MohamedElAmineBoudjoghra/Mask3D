@@ -96,7 +96,7 @@ class SetCriterion(nn.Module):
 
     def __init__(self, train_is_true,num_classes, matcher, weight_dict, eos_coef, losses,
                  num_points, oversample_ratio, importance_sample_ratio,
-                 class_weights, num_querries, store_path,clustering_start_iter, clustering_update_mu_iter, enable_baseline_clustering,clustering_momentum, enable_meta_loss):
+                 class_weights, num_querries, store_path,clustering_start_iter, clustering_update_mu_iter, enable_baseline_clustering,clustering_momentum):
         """Create the criterion.
         Parameters:
             num_classes: number of object categories, omitting the special no-object category
