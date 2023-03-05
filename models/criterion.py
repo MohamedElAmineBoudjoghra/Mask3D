@@ -195,7 +195,7 @@ class SetCriterion(nn.Module):
         unkn_lbs = pred_labels==200
         for batch_id, (map_id, target_id) in enumerate(indices):
             #known
-            tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)])])
+            tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*200).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)])])
             ref_qerries = torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]]) if batch_id == 0 else torch.cat([ref_qerries, torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]])])
         
         distances = torch.cdist(ref_qerries, self.means.to(device), p=2)   
@@ -203,7 +203,7 @@ class SetCriterion(nn.Module):
         for index in range(ref_qerries.shape[0]):
             for cls_index in range(self.means.shape[0]):
                     if cls_index == self.means.shape[0]-1:
-                        cls_index = 198
+                        cls_index = 200
                     if  tg_labels[index] ==  cls_index:
                         cc_labels.append(1)
                     else:
@@ -266,7 +266,7 @@ class SetCriterion(nn.Module):
             #################################################################
             # print(targets[batch_id]['labels'][target_id] )
             # print(mask_type)
-            if self.train_is_true:
+            if self.train_is_true: 
                 ignore_masks = targets[batch_id]['labels'][target_id] != 253
                 target_mask = target_mask[ignore_masks]
                 map = map[ignore_masks]
