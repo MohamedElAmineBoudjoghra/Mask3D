@@ -75,14 +75,16 @@ general:
   save_energy_training_dataset_in: ./json/${general.experiment_name}/energy/
   WARM_UP_EPOCH: 300
   ENERGY_TEMP: 0.05
+  store_size: 500
 
   enable_baseline_clustering: True
   c_loss: 1
   store_path: "./json/${general.experiment_name}/store/store.pt"
-  clustering_start_iter: 20000
-  clustering_update_mu_iter: 20
+  clustering_start_iter: 10
+  clustering_update_mu_iter: 2
   clustering_momentum: 0.7
 
+  
 
 defaults:
   - data: indoor

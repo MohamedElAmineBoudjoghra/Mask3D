@@ -16,3 +16,4 @@ clustering_start_iter: ${general.clustering_start_iter}
 clustering_update_mu_iter: ${general.clustering_update_mu_iter}
 enable_baseline_clustering: ${general.enable_baseline_clustering}
 clustering_momentum: ${general.clustering_momentum}
+store_size: ${general.store_size}
