@@ -128,23 +128,24 @@ class SetCriterion(nn.Module):
         self.num_seen_cls = 63
         self.num_querries = num_querries
         self.store = Queue((self.num_seen_cls+1,self.num_querries,128), store_path)
+        self.means =  self.store.get_means()
         self.clustering_start_iter = clustering_start_iter
         self.clustering_update_mu_iter = clustering_update_mu_iter
         self.enable_baseline_clustering = enable_baseline_clustering
         self.hingeloss = nn.HingeEmbeddingLoss(2)
         self.clustering_momentum = clustering_momentum
         # self.enable_meta_loss = enable_meta_loss
-        # if self.enable_meta_loss:
-        #     print('Loading Discriminative Centroids Loss.')
-        #     self.meta_loss = DiscCentroidsLoss(num_classes=self.num_classes, feat_dim=128)
-        # elif self.enable_baseline_clustering:
-        #     print('applying baseline contrastive loss')
+    #     if self.enable_meta_loss:
+    #         print('Loading Discriminative Centroids Loss.')
+    #         self.meta_loss = DiscCentroidsLoss(num_classes=self.num_classes, feat_dim=128, num_seen_classes=self.num_seen_cls)
+    #     elif self.enable_baseline_clustering:
+    #         print('applying baseline contrastive loss')
     
 
             
-    # def get_meta_loss(self, feats, label):
+    # def get_meta_loss(self, outputs, targets, indices):
     #     if self.enable_meta_loss:
-    #         return {"meta_loss": self.meta_loss(feats, label)}
+    #         return {"meta_loss": self.meta_loss(outputs, targets, indices)}
     #     else:
     #         return {"meta_loss": 0}
     
@@ -161,11 +162,13 @@ class SetCriterion(nn.Module):
         if (iter > self.clustering_start_iter//2) and (iter < self.clustering_start_iter):
             self.store.update_store(outputs, targets, indices)
         elif iter == self.clustering_start_iter:
-            self.means =  self.store.get_means()
+            self.means =  self.store.get_means().to(device)
             c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
+            self.store.update_store(outputs, targets, indices)
         elif (iter > self.clustering_start_iter) and (iter % self.clustering_update_mu_iter == 0):
-            self.means = self.clustering_momentum*self.means+(1-self.clustering_momentum)*self.store.get_means()
+            self.means = self.clustering_momentum*self.means.to(device)+(1-self.clustering_momentum)*self.store.get_means().to(device)
             c_loss = self.clstr_loss_l2_cdist(outputs, targets, indices)
+            self.store.update_store(outputs, targets, indices)
         
         return {"c_loss": torch.tensor([c_loss]).to(device) } 
             
@@ -409,17 +412,30 @@ class SetCriterion(nn.Module):
 
     
 # class DiscCentroidsLoss(nn.Module):
-#     def __init__(self, num_classes, feat_dim, size_average=True):
+#     def __init__(self, num_classes, feat_dim, num_seen_classes, size_average=True):
 #         super(DiscCentroidsLoss, self).__init__()
 #         self.num_classes = num_classes
+#         self.num_seen_classes = num_seen_classes
 #         self.centroids = nn.Parameter(torch.randn(num_classes, feat_dim))
 #         self.disccentroidslossfunc = DiscCentroidsLossFunc.apply
 #         self.feat_dim = feat_dim
 #         self.size_average = size_average
 
-#     def forward(self, feat, label):
+#     def forward(self, outputs, targets, indices):
 
-#         batch_size = feat.size(0)
+#         device = targets[0]['labels'].device
+#         pred_logits = outputs['pred_logits']
+#         pred_logits = torch.functional.F.softmax(
+#             pred_logits ,
+#             dim=-1)[..., :-1]
+#         pred_labels = torch.argmax(pred_logits, dim=-1)
+#         unkn_lbs = pred_labels==200
+#         for batch_id, (map_id, target_id) in enumerate(indices):
+#             #known
+#             tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)])])
+#             ref_qerries = torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]]) if batch_id == 0 else torch.cat([ref_qerries, torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]])])
+        
+        
 
 #         #############################
 #         # calculate attracting loss #
@@ -514,7 +530,7 @@ class Queue:
             
                     
             for tg in label_list:
-                num_feats = (targets[batch_id]['labels'] == tg).sum()
+                num_feats = (tg_labels == tg).sum()
                 if tg != 200:
                     self.store[tg] = torch.cat([self.store[tg][num_feats:],ref_qerries[tg_labels==tg]], dim = 0)
                 else:

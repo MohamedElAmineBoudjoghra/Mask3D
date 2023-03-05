@@ -7,8 +7,8 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="corr_EBUI_CC" \
-general.project_name="corrected_open_world_instance_segmentation" \
+general.experiment_name="EBUI_CC" \
+general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
 data/datasets=scannet200 \
