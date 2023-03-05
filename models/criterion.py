@@ -198,7 +198,7 @@ class SetCriterion(nn.Module):
             tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)])])
             ref_qerries = torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]]) if batch_id == 0 else torch.cat([ref_qerries, torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]])])
         
-        distances = torch.cdist(ref_qerries, self.means, p=2)   
+        distances = torch.cdist(ref_qerries, self.means.to(device), p=2)   
         cc_labels = []    
         for index in range(ref_qerries.shape[0]):
             for cls_index in range(self.means.shape[0]):
