@@ -7,14 +7,14 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="Mask3D_OW_corrected" \
+general.experiment_name="CC_corrected" \
 general.project_name="open_world_instance_segmentation_corrected" \
 general.train_mode=true \
 general.checkpoint=null \
 data/datasets=scannet200 \
 general.train_oracle=False \
 general.learn_energy_trainig_dataset=False \
-general.enable_baseline_clustering=False \
+general.enable_baseline_clustering=True \
 general.clustering_start_iter=20000 \
 general.clustering_update_mu_iter=20 \
 general.clustering_momentum=0.7 \
