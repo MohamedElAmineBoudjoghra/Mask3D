@@ -597,7 +597,6 @@ class SemanticSegmentationDataset(Dataset):
         labels[~np.isin(labels, list(self.label_info.keys()))] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
-            # labels[labels == k] = list(CLASS_LABELS_200).index(self.label_info[k]['name'])
             labels[labels == k] = i
         return labels
 
@@ -606,7 +605,6 @@ class SemanticSegmentationDataset(Dataset):
         output[output==202] = 200 #setting the unknown class to common 200 label
         output_remapped = output.copy()
         for i, k in enumerate(self.label_info.keys()):
-            # output_remapped[output == list(CLASS_LABELS_200).index(self.label_info[k]['name'])] = k
             output_remapped[output == i] = k
         return output_remapped
 
