@@ -7,13 +7,13 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="Oracle" \
+general.experiment_name="EBUI" \
 general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
 data/datasets=scannet200 \
-general.train_oracle=True \
-general.learn_energy_trainig_dataset=False \
+general.train_oracle=False \
+general.learn_energy_trainig_dataset=True \
 general.enable_baseline_clustering=False \
 general.clustering_start_iter=20000 \
 general.clustering_update_mu_iter=20 \
