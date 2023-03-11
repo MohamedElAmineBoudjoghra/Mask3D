@@ -145,8 +145,6 @@ class InstanceSegmentation(pl.LightningModule):
             target = self.task_2(target)
         elif self.config.general.OW_task == "task3":
             target = self.task_3(target)
-        else:
-            assert False , "ENTER ONE OF CANDIDATE TASKS : task1, task2, task3"
                
         if data.features.shape[0] > self.config.general.max_batch_size:
             print("data exceeds threshold")
@@ -178,7 +176,7 @@ class InstanceSegmentation(pl.LightningModule):
 
         try:
             losses = self.criterion(output, target, mask_type=self.mask_type, iteration = self.global_step)
-            
+
             if self.config.general.learn_energy_trainig_dataset and (self.current_epoch >= self.config.general.WARM_UP_EPOCH):
                 
                 for b in range(len(target)):
@@ -542,6 +540,7 @@ class InstanceSegmentation(pl.LightningModule):
                     # # self.config.querie_feats['pred_label'] += [MAP_ID_TO_STRING[i] for i in id_list]
                     # self.config.querie_feats['quer_features'] += refin_queries_list
                 
+                
                     
             except ValueError as val_err:
                 print(f"ValueError: {val_err}")
@@ -864,6 +863,7 @@ class InstanceSegmentation(pl.LightningModule):
                     )
 #######################################################################################
     def eval_instance_epoch_end(self):
+        self.learn_energy()
         log_prefix = f"val"
         ap_results = {}
 
@@ -974,9 +974,9 @@ class InstanceSegmentation(pl.LightningModule):
                 mean_common_results = np.nanmean(common_results, axis=0)
                 mean_head_results = np.nanmean(head_results, axis=0)
 
-                ap_results[f"{log_prefix}_mean_tail_ap_25"] = mean_tail_results[0]
-                ap_results[f"{log_prefix}_mean_common_ap_25"] = mean_common_results[0]
-                ap_results[f"{log_prefix}_mean_head_ap_25"] = mean_head_results[0]
+                ap_results[f"{log_prefix}_mean_tail_ap"] = mean_tail_results[0]
+                ap_results[f"{log_prefix}_mean_common_ap"] = mean_common_results[0]
+                ap_results[f"{log_prefix}_mean_head_ap"] = mean_head_results[0]
 
                 ap_results[f"{log_prefix}_mean_tail_ap_50"] = mean_tail_results[1]
                 ap_results[f"{log_prefix}_mean_common_ap_50"] = mean_common_results[1]
@@ -1257,22 +1257,22 @@ class InstanceSegmentation(pl.LightningModule):
             lse_unkn = (temp * torch.logsumexp(logits_ukn[:, :self.num_seen_classes] / temp, dim=1)).detach().cpu().tolist()
             lse_kn = (temp * torch.logsumexp(logits_kn[:, :self.num_seen_classes] / temp, dim=1)).detach().cpu().tolist()
             
-            wb_dist_param = []
-            save_WB_in = "./saved/"+self.config.general.experiment_name+"/energy_dist_"+str(self.num_seen_classes)+".pkl"
-            wb_unk = Fit_Weibull_3P(failures=lse_unkn, show_probability_plot=False, print_results=False)
-            wb_kn = Fit_Weibull_3P(failures=lse_kn, show_probability_plot=False, print_results=False)
+            # wb_dist_param = []
+            # save_WB_in = "./saved/"+self.config.general.experiment_name+"/energy_dist_"+str(self.num_seen_classes)+".pkl"
+            # wb_unk = Fit_Weibull_3P(failures=lse_unkn, show_probability_plot=False, print_results=False)
+            # wb_kn = Fit_Weibull_3P(failures=lse_kn, show_probability_plot=False, print_results=False)
             
-            wb_dist_param.append({"scale_unk": wb_unk.alpha, "shape_unk": wb_unk.beta, "shift_unk": wb_unk.gamma})
-            wb_dist_param.append({"scale_known": wb_kn.alpha, "shape_known": wb_kn.beta, "shift_known": wb_kn.gamma})
+            # wb_dist_param.append({"scale_unk": wb_unk.alpha, "shape_unk": wb_unk.beta, "shift_unk": wb_unk.gamma})
+            # wb_dist_param.append({"scale_known": wb_kn.alpha, "shape_known": wb_kn.beta, "shift_known": wb_kn.gamma})
             
-            torch.save(wb_dist_param, save_WB_in)
-            plt.hist(lse_kn, density = True,alpha=0.5, label='known')
-            plt.hist(lse_unkn, density = True, alpha=0.5, label='unk')
-            plt.legend(loc='upper right')
-            save_WB_in = "./saved/"+self.config.general.experiment_name
-            plt.savefig(os.path.join(save_WB_in, 'energy.png'))
-            plt.clf()
-            shutil.rmtree(file_path)
+            # torch.save(wb_dist_param, save_WB_in)
+            # plt.hist(lse_kn, density = True,alpha=0.5, label='known')
+            # plt.hist(lse_unkn, density = True, alpha=0.5, label='unk')
+            # plt.legend(loc='upper right')
+            # save_WB_in = "./saved/"+self.config.general.experiment_name
+            # plt.savefig(os.path.join(save_WB_in, 'energy.png'))
+            # plt.clf()
+            # shutil.rmtree(file_path)
   
         else: 
             print(f"generate {file_path_p} first")
