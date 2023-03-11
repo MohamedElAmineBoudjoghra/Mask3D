@@ -199,7 +199,7 @@ class SetCriterion(nn.Module):
             ref_qerries = torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]]) if batch_id == 0 else torch.cat([ref_qerries, torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]])])
         
         distances = torch.cdist(ref_qerries, self.means.to(device), p=2)
-        distances[:,-1] = 10*distances[:,-1]   
+        # distances[:,-1] = 10*distances[:,-1]   
         cc_labels = []    
         for index in range(ref_qerries.shape[0]):
             for cls_index in range(self.means.shape[0]):
