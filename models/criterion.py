@@ -195,7 +195,7 @@ class SetCriterion(nn.Module):
         unkn_lbs = pred_labels==200
         for batch_id, (map_id, target_id) in enumerate(indices):
             #known
-            tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*200).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*198).to(device)])])
+            tg_labels = torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*200).to(device)]) if batch_id == 0 else torch.cat([tg_labels, torch.cat([targets[batch_id]['labels'][target_id], (torch.ones(unkn_lbs[batch_id].sum())*200).to(device)])])
             ref_qerries = torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]]) if batch_id == 0 else torch.cat([ref_qerries, torch.cat([outputs['refin_queries'][batch_id][map_id], outputs['refin_queries'][batch_id][unkn_lbs[batch_id]]])])
         
         distances = torch.cdist(ref_qerries, self.means.to(device), p=2)   
