@@ -7,7 +7,7 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="Mask3D_new_order" \
+general.experiment_name="task1_old_order" \
 general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
@@ -20,7 +20,7 @@ general.clustering_update_mu_iter=20 \
 general.clustering_momentum=0.7 \
 general.c_loss=4 \
 general.store_size=500 \
-general.OW_task="all_labels"
+general.OW_task="task1"
 # # data.num_labels=200 \
 # # general.eval_on_segments=true \
 # # general.train_on_segments=true
