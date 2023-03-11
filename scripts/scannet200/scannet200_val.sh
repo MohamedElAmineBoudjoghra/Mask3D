@@ -7,18 +7,18 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="CC" \
+general.experiment_name="EBUI_CC" \
 general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
 data/datasets=scannet200 \
 general.train_oracle=False \
-general.learn_energy_trainig_dataset=False \
+general.learn_energy_trainig_dataset=True \
 general.enable_baseline_clustering=True \
 general.clustering_start_iter=20000 \
 general.clustering_update_mu_iter=20 \
 general.clustering_momentum=0.7 \
-general.c_loss=40 \
+general.c_loss=4 \
 general.store_size=500
 # # data.num_labels=200 \
 # # general.eval_on_segments=true \
