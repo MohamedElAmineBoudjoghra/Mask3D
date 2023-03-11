@@ -20,7 +20,7 @@ general.clustering_update_mu_iter=20 \
 general.clustering_momentum=0.7 \
 general.c_loss=4 \
 general.store_size=500 \
-general.OW_task == "all_labels"
+general.OW_task="all_labels"
 # # data.num_labels=200 \
 # # general.eval_on_segments=true \
 # # general.train_on_segments=true
