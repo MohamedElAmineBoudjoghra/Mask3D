@@ -8,7 +8,7 @@ CURR_QUERY=150
 # # TRAIN
 python main_instance_segmentation.py \
 general.experiment_name="Mask3D_OWIS" \
-general.project_name="OWIS_new_cls_compatible" \
+general.project_name="open_world_instance_segmentation" \
 general.train_mode=true \
 general.checkpoint=null \
 data/datasets=scannet200 \
