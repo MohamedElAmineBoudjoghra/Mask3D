@@ -863,7 +863,6 @@ class InstanceSegmentation(pl.LightningModule):
                     )
 #######################################################################################
     def eval_instance_epoch_end(self):
-        self.learn_energy()
         log_prefix = f"val"
         ap_results = {}
 
@@ -1257,22 +1256,22 @@ class InstanceSegmentation(pl.LightningModule):
             lse_unkn = (temp * torch.logsumexp(logits_ukn[:, :self.num_seen_classes] / temp, dim=1)).detach().cpu().tolist()
             lse_kn = (temp * torch.logsumexp(logits_kn[:, :self.num_seen_classes] / temp, dim=1)).detach().cpu().tolist()
             
-            # wb_dist_param = []
-            # save_WB_in = "./saved/"+self.config.general.experiment_name+"/energy_dist_"+str(self.num_seen_classes)+".pkl"
-            # wb_unk = Fit_Weibull_3P(failures=lse_unkn, show_probability_plot=False, print_results=False)
-            # wb_kn = Fit_Weibull_3P(failures=lse_kn, show_probability_plot=False, print_results=False)
+            wb_dist_param = []
+            save_WB_in = "./saved/"+self.config.general.experiment_name+"/energy_dist_"+str(self.num_seen_classes)+".pkl"
+            wb_unk = Fit_Weibull_3P(failures=lse_unkn, show_probability_plot=False, print_results=False)
+            wb_kn = Fit_Weibull_3P(failures=lse_kn, show_probability_plot=False, print_results=False)
             
-            # wb_dist_param.append({"scale_unk": wb_unk.alpha, "shape_unk": wb_unk.beta, "shift_unk": wb_unk.gamma})
-            # wb_dist_param.append({"scale_known": wb_kn.alpha, "shape_known": wb_kn.beta, "shift_known": wb_kn.gamma})
+            wb_dist_param.append({"scale_unk": wb_unk.alpha, "shape_unk": wb_unk.beta, "shift_unk": wb_unk.gamma})
+            wb_dist_param.append({"scale_known": wb_kn.alpha, "shape_known": wb_kn.beta, "shift_known": wb_kn.gamma})
             
-            # torch.save(wb_dist_param, save_WB_in)
-            # plt.hist(lse_kn, density = True,alpha=0.5, label='known')
-            # plt.hist(lse_unkn, density = True, alpha=0.5, label='unk')
-            # plt.legend(loc='upper right')
-            # save_WB_in = "./saved/"+self.config.general.experiment_name
-            # plt.savefig(os.path.join(save_WB_in, 'energy.png'))
-            # plt.clf()
-            # shutil.rmtree(file_path)
+            torch.save(wb_dist_param, save_WB_in)
+            plt.hist(lse_kn, density = True,alpha=0.5, label='known')
+            plt.hist(lse_unkn, density = True, alpha=0.5, label='unk')
+            plt.legend(loc='upper right')
+            save_WB_in = "./saved/"+self.config.general.experiment_name
+            plt.savefig(os.path.join(save_WB_in, 'energy.png'))
+            plt.clf()
+            shutil.rmtree(file_path)
   
         else: 
             print(f"generate {file_path_p} first")
