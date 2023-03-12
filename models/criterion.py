@@ -133,7 +133,6 @@ class SetCriterion(nn.Module):
         self.clustering_start_iter = clustering_start_iter
         self.clustering_update_mu_iter = clustering_update_mu_iter
         self.enable_baseline_clustering = enable_baseline_clustering
-        self.hingeloss = nn.HingeEmbeddingLoss(2)
         self.clustering_momentum = clustering_momentum
         # self.enable_meta_loss = enable_meta_loss
     #     if self.enable_meta_loss:
@@ -211,7 +210,7 @@ class SetCriterion(nn.Module):
                         cc_labels.append(-1)
                             
 
-        loss = self.hingeloss(distances, torch.tensor(cc_labels).reshape((-1,self.means.shape[0])).to(device))
+        loss = F.hinge_embedding_loss(distances, torch.tensor(cc_labels).reshape((-1,self.means.shape[0])).to(device),reduction='mean')
 
         return loss    
     #########################
