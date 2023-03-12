@@ -378,7 +378,7 @@ def assign_instances_for_scan(task, pred: dict, gt_file: str):
     gt_instances = util_3d.get_instances(task, gt_ids, VALID_CLASS_IDS, CLASS_LABELS, ID_TO_LABEL)
     # associate
     gt2pred = deepcopy(gt_instances)
-    for label in gt2pred:
+    for label in gt2pred: 
         for gt in gt2pred[label]:
             gt['matched_pred'] = []
     pred2gt = {}
@@ -546,6 +546,9 @@ def evaluate(config_general,A_OSE, preds: dict, gt_path: str, output_file: str, 
         CLASS_LABELS.remove('floor')
         VALID_CLASS_IDS.remove(1)
         VALID_CLASS_IDS.remove(3)
+        VALID_CLASS_IDS = np.array(VALID_CLASS_IDS)
+        CLASS_LABELS = np.array(CLASS_LABELS)
+        
         ID_TO_LABEL = {}
         LABEL_TO_ID = {}
         for i in range(len(VALID_CLASS_IDS)):
