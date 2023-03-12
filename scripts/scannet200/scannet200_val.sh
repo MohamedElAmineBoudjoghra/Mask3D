@@ -7,7 +7,7 @@ CURR_QUERY=150
 
 # # TRAIN
 python main_instance_segmentation.py \
-general.experiment_name="EBUI_CC" \
+general.experiment_name="EBUI_CC_OWIS" \
 general.project_name="open_world_instance_segmentation" \ 
 general.train_mode=true \
 general.checkpoint=null \
@@ -18,7 +18,7 @@ general.enable_baseline_clustering=True \
 general.clustering_start_iter=20000 \
 general.clustering_update_mu_iter=20 \
 general.clustering_momentum=0.7 \
-general.c_loss=40 \
+general.c_loss=4 \
 general.store_size=500 \
 general.OW_task="task1"
 # # data.num_labels=200 \
