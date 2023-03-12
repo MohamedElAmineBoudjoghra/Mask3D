@@ -83,7 +83,7 @@ general:
   store_path: "./json/${general.experiment_name}/store/store.pt"
   clustering_start_iter: 20000
   clustering_update_mu_iter: 20
-  clustering_momentum: 0.7
+  clustering_momentum: 0.95
 
   
 
