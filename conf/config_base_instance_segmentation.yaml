@@ -17,7 +17,7 @@ general:
   ignore_class_threshold: 100
   project_name: open_world_instance_segmentation
   workspace: jonasschult
-  experiment_name: EBUI_CC_OWIS #scannet200_val_test
+  experiment_name: EBUI_CC_12_03 #scannet200_val_test
   num_targets: 202
   add_instance: true
   dbscan_eps: 0.95
