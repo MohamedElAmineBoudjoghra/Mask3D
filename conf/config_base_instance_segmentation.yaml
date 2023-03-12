@@ -15,9 +15,9 @@ general:
   export: false
   use_dbscan: false
   ignore_class_threshold: 100
-  project_name: debugging
+  project_name: open_world_instance_segmentation
   workspace: jonasschult
-  experiment_name: learn_energy #scannet200_val_test
+  experiment_name: EBUI_CC_OWIS #scannet200_val_test
   num_targets: 202
   add_instance: true
   dbscan_eps: 0.95
@@ -67,6 +67,7 @@ general:
   save_precision_at: [0.8] #recall
 
   save_WI_AOSE: False
+  save_U_recall: False
 
   save_KN_UKN_tSNE: False # save yml file of known uknown clusters and distance between centers
   save_features_in: "./json/${general.experiment_name}/features/"
@@ -78,10 +79,10 @@ general:
   store_size: 500
 
   enable_baseline_clustering: True
-  c_loss: 1
+  c_loss: 4
   store_path: "./json/${general.experiment_name}/store/store.pt"
-  clustering_start_iter: 10
-  clustering_update_mu_iter: 2
+  clustering_start_iter: 20000
+  clustering_update_mu_iter: 20
   clustering_momentum: 0.7
 
   
